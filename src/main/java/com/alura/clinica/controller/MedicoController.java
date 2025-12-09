@@ -2,6 +2,7 @@ package com.alura.clinica.controller;
 
 import com.alura.clinica.dto.medico.AtualizacaoMedicoRequest;
 import com.alura.clinica.dto.medico.CadastroMedicoRequest;
+import com.alura.clinica.dto.medico.ListagemMedicoResponse;
 import com.alura.clinica.dto.medico.MedicoResponse;
 import com.alura.clinica.model.Medico;
 import com.alura.clinica.service.MedicoService;
@@ -34,11 +35,20 @@ public class MedicoController {
                 .body(response);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<MedicoResponse> buscarPorId(@PathVariable Long id) {
+        Medico medico = medicoService.buscarPorId(id);
+
+        MedicoResponse response = new MedicoResponse(medico);
+
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping
-    public ResponseEntity<Page<MedicoResponse>> listar(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao) {
+    public ResponseEntity<Page<ListagemMedicoResponse>> listar(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao) {
         Page<Medico> lista = medicoService.listar(paginacao);
 
-        Page<MedicoResponse> response = lista.map(MedicoResponse::new);
+        Page<ListagemMedicoResponse> response = lista.map(ListagemMedicoResponse::new);
 
         return ResponseEntity.ok(response);
     }

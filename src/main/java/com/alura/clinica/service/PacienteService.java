@@ -25,6 +25,11 @@ public class PacienteService {
         return pacienteRepository.save(paciente);
     }
 
+    public Paciente buscarPorId(Long id) {
+        return pacienteRepository.findById(id)
+                .orElseThrow(EntityNotFoundException::new);
+    }
+
     public Page<Paciente> listar(Pageable paginacao) {
         return pacienteRepository.findAllByAtivoTrue(paginacao);
     }
@@ -32,7 +37,7 @@ public class PacienteService {
     @Transactional
     public Paciente atualizar(Long id, AtualizacaoPacienteRequest request) {
         Paciente paciente = pacienteRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Paciente não encontrado"));
+                .orElseThrow(EntityNotFoundException::new);
 
         paciente.atualizarDados(request);
 
@@ -42,7 +47,7 @@ public class PacienteService {
     @Transactional
     public void deletar(Long id) {
         Paciente paciente = pacienteRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Paciente não encontrado"));
+                .orElseThrow(EntityNotFoundException::new);
 
         paciente.excluir();
     }

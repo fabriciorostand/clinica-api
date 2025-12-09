@@ -7,18 +7,20 @@ import lombok.Getter;
 
 @Getter
 public class CadastroPacienteRequest {
-    @NotBlank
+    @NotBlank(message = "{nome.obrigatorio}")
     private String nome;
 
-    @Email @NotBlank
+    @NotBlank(message = "{email.obrigatorio}")
+    @Email(message = "{email.invalido}")
     private String email;
 
-    @NotBlank
+    @NotBlank(message = "{telefone.obrigatorio}")
     private String telefone;
 
-    @Pattern(regexp = "\\d{11}") @NotBlank
+    @NotBlank(message = "{cpf.obrigatorio}")
+    @Pattern(regexp = "\\d{11}", message = "{cpf.invalido}")
     private String cpf;
 
-    @NotBlank
+    @NotBlank(message = "{endereco.obrigatorio}")
     private String endereco;
 }

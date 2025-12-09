@@ -8,7 +8,7 @@ import lombok.*;
 @Entity
 @Table(name = "pacientes")
 @NoArgsConstructor @AllArgsConstructor
-@Getter @Setter
+@Getter
 @EqualsAndHashCode(of = "id")
 public class Paciente {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

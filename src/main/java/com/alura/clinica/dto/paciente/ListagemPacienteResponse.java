@@ -5,21 +5,19 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
 
 @Getter
-@JsonPropertyOrder({"id", "nome", "email", "telefone", "cpf", "endereco"})
-public class PacienteResponse {
+// Define a ordem das propriedades na serialização JSON
+@JsonPropertyOrder({"id", "nome", "email", "telefone"})
+public class ListagemPacienteResponse {
     private Long id;
     private String nome;
     private String email;
-    private String telefone;
     private String cpf;
-    private String endereco;
 
-    public PacienteResponse(Paciente paciente) {
+    // Construtor que converte Paciente para PacienteResponse
+    public ListagemPacienteResponse(Paciente paciente) {
         this.id = paciente.getId();
         this.nome = paciente.getNome();
         this.email = paciente.getEmail();
-        this.telefone = paciente.getTelefone();
         this.cpf = paciente.getCpf();
-        this.endereco = paciente.getEndereco();
     }
 }
