@@ -1,6 +1,9 @@
 package com.alura.clinica.controller;
 
 import com.alura.clinica.dto.auth.LoginRequest;
+import com.alura.clinica.model.Usuario;
+import com.alura.clinica.security.TokenJWTResponse;
+import com.alura.clinica.security.TokenService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,13 +19,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthenticationManager manager;
+    private final TokenService tokenService;
 
     @PostMapping("/login")
-    public ResponseEntity logar(@RequestBody @Valid LoginRequest request) {
-        var token = new UsernamePasswordAuthenticationToken(request.getEmail(), request.getSenha());
+    public ResponseEntity<TokenJWTResponse> logar(@RequestBody @Valid LoginRequest request) {
+        var authenticationToken = new UsernamePasswordAuthenticationToken(request.getEmail(), request.getSenha());
+        var authentication = manager.authenticate(authenticationToken);
 
-        var authentication = manager.authenticate(token);
+        var tokenJWT = tokenService.gerarToken((Usuario) authentication.getPrincipal());
 
-        return ResponseEntity.ok().build();
+        TokenJWTResponse response = new TokenJWTResponse(tokenJWT);
+
+        return ResponseEntity.ok(response);
     }
 }

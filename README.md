@@ -9,6 +9,7 @@ API REST para gestão de clínica, permitindo controle de médicos, pacientes e 
 - **Spring Data JPA** - Persistência de dados
 - **Spring Web** - API REST
 - **Spring Validation** - Validação de dados
+- **Spring Security** - Segurança, autenticação e autorização de usuários
 - **MySQL** - Banco de dados relacional
 - **Flyway** - Versionamento e migração de banco de dados
 - **Lombok** - Redução de código repetitivo
