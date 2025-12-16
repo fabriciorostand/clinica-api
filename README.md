@@ -1,6 +1,6 @@
 ## 📋 Descrição
 
-API REST para gestão de clínica, permitindo controle de médicos, pacientes e suas informações. Desenvolvido com Spring Boot, Java 21 e MySQL, oferecendo endpoints para gerenciamento completo de médicos e pacientes com suporte a paginação e exclusão lógica.
+API REST para gestão de clínica, permitindo controle de médicos, pacientes e suas informações. Desenvolvido com Spring Boot, Java 21 e MySQL, oferecendo endpoints para gerenciamento completo de médicos e pacientes com suporte a paginação, exclusão lógica e autenticação segura via JWT.
 
 ## 🚀 Tecnologias Utilizadas
 
@@ -38,15 +38,36 @@ Antes de começar, certifique-se de ter instalado em sua máquina:
 
 ## 🚀 Instruções de Inicialização
 
-### 1. Configurar o Banco de Dados
+### 1. Configurar Variáveis de Ambiente
 
-Edite o arquivo `src/main/resources/application.properties` com suas credenciais:
+A aplicação utiliza variáveis de ambiente para configurar credenciais sensíveis. Configure as seguintes variáveis:
+
+**Windows (PowerShell):**
+```powershell
+$env:DB_URL="jdbc:mysql://localhost:3306/clinica"
+$env:DB_USERNAME="root"
+$env:DB_PASSWORD="sua_senha_aqui"
+$env:JWT_SECRET="sua_chave_secreta_jwt_aqui"
+```
+
+**Linux/Mac (Bash):**
+```bash
+export DB_URL="jdbc:mysql://localhost:3306/clinica"
+export DB_USERNAME="root"
+export DB_PASSWORD="sua_senha_aqui"
+export JWT_SECRET="sua_chave_secreta_jwt_aqui"
+```
+
+Ou edite o arquivo `src/main/resources/application.properties` diretamente:
 
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/clinica
 spring.datasource.username=root
 spring.datasource.password=SUA_SENHA
+api.security.token.secret=SUA_CHAVE_JWT
 ```
+
+**Nota:** A chave JWT (`JWT_SECRET`) deve ser uma string segura e suficientemente longa para gerar tokens seguros.
 
 ### 2. Instalar Dependências
 
@@ -126,22 +147,139 @@ clinica-api/
 
 A API está disponível no prefixo `/api` e oferece os seguintes recursos:
 
+### Autenticação
+- `POST /api/auth/login` - Realizar login e obter token JWT
+  - Requer: `email` e `senha`
+  - Retorna: `token` JWT para autenticação em requisições subsequentes
+
 ### Médicos
-- `POST /api/medicos` - Cadastrar novo médico
-- `GET /api/medicos` - Listar médicos com paginação
-- `PUT /api/medicos/{id}` - Atualizar dados do médico
-- `DELETE /api/medicos/{id}` - Deletar médico (exclusão lógica)
+- `POST /api/medicos` - Cadastrar novo médico (requer autenticação)
+- `GET /api/medicos` - Listar médicos com paginação (requer autenticação)
+  - Parâmetros: `page`, `size`, `sort`
+  - Padrão: 10 itens por página, ordenado por nome
+- `GET /api/medicos/{id}` - Obter detalhes de um médico (requer autenticação)
+- `PUT /api/medicos/{id}` - Atualizar dados do médico (requer autenticação)
+- `DELETE /api/medicos/{id}` - Deletar médico (requer autenticação, exclusão lógica)
 
 ### Pacientes
-- `POST /api/pacientes` - Cadastrar novo paciente
-- `GET /api/pacientes` - Listar pacientes com paginação
-- `PUT /api/pacientes/{id}` - Atualizar dados do paciente
-- `DELETE /api/pacientes/{id}` - Deletar paciente (exclusão lógica)
+- `POST /api/pacientes` - Cadastrar novo paciente (requer autenticação)
+- `GET /api/pacientes` - Listar pacientes com paginação (requer autenticação)
+  - Parâmetros: `page`, `size`, `sort`
+  - Padrão: 10 itens por página, ordenado por nome
+- `GET /api/pacientes/{id}` - Obter detalhes de um paciente (requer autenticação)
+- `PUT /api/pacientes/{id}` - Atualizar dados do paciente (requer autenticação)
+- `DELETE /api/pacientes/{id}` - Deletar paciente (requer autenticação, exclusão lógica)
 
 ## 💡 Recursos Principais
 
+- **Autenticação JWT**: Sistema seguro de autenticação com tokens JWT
 - **Paginação**: Todos os endpoints de listagem suportam paginação configurável
 - **Exclusão Lógica**: Médicos e pacientes não são removidos do banco, apenas marcados como inativos
 - **DTOs**: Separação entre requisições e respostas da API
-- **Validação Automática**: Validações em tempo de requisição
+- **Validação Automática**: Validações em tempo de requisição com mensagens de erro detalhadas
+- **Tratamento de Erros**: Respostas padronizadas para diferentes tipos de erro (4xx, 5xx)
+- **Spring Security**: Integração completa com Spring Security para autorização
 - **Flyway Migrations**: Controle de versão do banco de dados
+- **Lombok**: Redução de código boilerplate nas entidades e DTOs
+
+## 📖 Exemplos de Uso
+
+### 1. Realizar Login
+
+```bash
+curl -X POST http://localhost:8080/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "medico@example.com",
+    "senha": "senha123"
+  }'
+```
+
+**Resposta:**
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+### 2. Cadastrar um Médico
+
+```bash
+curl -X POST http://localhost:8080/api/medicos \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer {token}" \
+  -d '{
+    "nome": "Dr. João Silva",
+    "email": "joao@example.com",
+    "crm": "123456",
+    "telefone": "11999999999",
+    "especialidade": "Cardiologia",
+    "endereco": "Rua das Flores, 123"
+  }'
+```
+
+### 3. Listar Médicos com Paginação
+
+```bash
+curl -X GET "http://localhost:8080/api/medicos?page=0&size=10&sort=nome,asc" \
+  -H "Authorization: Bearer {token}"
+```
+
+### 4. Obter Detalhes de um Médico
+
+```bash
+curl -X GET http://localhost:8080/api/medicos/1 \
+  -H "Authorization: Bearer {token}"
+```
+
+### 5. Atualizar Dados de um Médico
+
+```bash
+curl -X PUT http://localhost:8080/api/medicos/1 \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer {token}" \
+  -d '{
+    "nome": "Dr. João Silva Atualizado",
+    "telefone": "11988888888"
+  }'
+```
+
+### 6. Deletar um Médico
+
+```bash
+curl -X DELETE http://localhost:8080/api/medicos/1 \
+  -H "Authorization: Bearer {token}"
+```
+
+## 🔐 Segurança
+
+- Todos os endpoints (exceto `/api/auth/login`) requerem autenticação via token JWT
+- O token JWT deve ser enviado no header `Authorization: Bearer {token}`
+- A senha do usuário é criptografada no banco de dados
+- A aplicação utiliza Spring Security para controlar o acesso aos recursos
+
+## 🗄️ Estrutura do Banco de Dados
+
+### Tabela: usuarios
+- `id` (BIGINT) - Identificador único
+- `email` (VARCHAR) - Email único do usuário
+- `senha` (VARCHAR) - Senha criptografada
+
+### Tabela: medicos
+- `id` (BIGINT) - Identificador único
+- `nome` (VARCHAR) - Nome do médico
+- `email` (VARCHAR) - Email único do médico
+- `crm` (VARCHAR) - CRM único do médico
+- `telefone` (VARCHAR) - Telefone para contato
+- `especialidade` (VARCHAR) - Especialidade médica
+- `endereco` (VARCHAR) - Endereço do consultório
+- `ativo` (BOOLEAN) - Flag de exclusão lógica
+
+### Tabela: pacientes
+- `id` (BIGINT) - Identificador único
+- `nome` (VARCHAR) - Nome do paciente
+- `email` (VARCHAR) - Email único do paciente
+- `cpf` (VARCHAR) - CPF único do paciente
+- `telefone` (VARCHAR) - Telefone para contato
+- `endereco` (VARCHAR) - Endereço residencial
+- `ativo` (BOOLEAN) - Flag de exclusão lógica
