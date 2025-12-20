@@ -24,7 +24,6 @@ public class TokenService {
             return JWT.create()
                     .withIssuer("API Clinica")
                     .withSubject(usuario.getEmail())
-                    .withClaim("id", usuario.getId())
                     .withExpiresAt(dataExpiracao())
                     .sign(algoritmo);
         } catch (JWTCreationException exception) {
@@ -40,7 +39,7 @@ public class TokenService {
                     .build()
                     .verify(tokenJWT)
                     .getSubject();
-        } catch (JWTVerificationException exception){
+        } catch (JWTVerificationException exception) {
            throw new RuntimeException("Token JWT inválido ou expirado!");
         }
     }

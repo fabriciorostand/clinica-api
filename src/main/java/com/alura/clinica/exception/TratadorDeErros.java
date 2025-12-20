@@ -2,7 +2,10 @@ package com.alura.clinica.exception;
 
 import com.alura.clinica.dto.exception.Erro400Response;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -30,5 +33,19 @@ public class TratadorDeErros {
         return ResponseEntity
                 .badRequest()
                 .body(response);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<String> tratarErro400() {
+        return ResponseEntity
+                .badRequest()
+                .body("Corpo da requisição inválido ou malformado");
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<String> tratarErroBadCredentials() {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body("Credenciais inválidas");
     }
 }

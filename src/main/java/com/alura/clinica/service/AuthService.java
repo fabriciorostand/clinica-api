@@ -14,6 +14,12 @@ public class AuthService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return usuarioRepository.findByEmail(email);
+        var usuario = usuarioRepository.findByEmail(email);
+
+        if (usuario == null) {
+            throw new UsernameNotFoundException("");
+        }
+
+        return usuario;
     }
 }
