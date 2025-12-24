@@ -66,6 +66,8 @@ public class MedicoController {
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         medicoService.deletar(id);
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 }

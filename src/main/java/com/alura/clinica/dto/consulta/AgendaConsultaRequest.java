@@ -1,22 +1,22 @@
 package com.alura.clinica.dto.consulta;
 
-import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.NotBlank;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Getter
 public class AgendaConsultaRequest {
-    @NotBlank
-    private String paciente;
-
-    @NotBlank
-    private String medico;
+    @NotNull
+    private Long medicoId;
 
     @NotNull
-    @FutureOrPresent
-    private String data;
+    private Long pacienteId;
 
-    @NotBlank
-    private String status;
+    @NotNull
+    @Future
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
+    private LocalDateTime data;
 }

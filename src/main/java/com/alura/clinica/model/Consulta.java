@@ -2,10 +2,9 @@ package com.alura.clinica.model;
 
 import com.alura.clinica.dto.consulta.AgendaConsultaRequest;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Entity(name = "Consulta")
 @Table(name = "consultas")
@@ -18,19 +17,41 @@ public class Consulta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String paciente;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "medico_id")
+    private Medico medico;
 
-    private String medico;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "paciente_id")
+    private Paciente paciente;
 
-    private String data;
+    private LocalDateTime data;
 
-    private String status;
+    private Boolean ativo;
 
     // Construtor que inicializa uma Consulta a partir de um AgendaConsultaRequest
     public Consulta(AgendaConsultaRequest request) {
-        this.paciente = request.getPaciente();
-        this.medico = request.getMedico();
+//        this.paciente.getId() = request.getPacienteId();
+//        this.medico.getId() = request.getMedicoId();
         this.data = request.getData();
-        this.status = request.getStatus();
+    }
+
+    public void atualizarDados(AgendaConsultaRequest request) {
+        if (request.getPacienteId() != null) {
+//            this.paciente.getId() = request.getPacienteId();
+        }
+
+        if (request.getMedicoId() != null) {
+//            this.medico.getId() = request.getMedicoId();
+        }
+
+        if (request.getData() != null) {
+            this.data = request.getData();
+        }
+    }
+
+    // Metodo para exclusão lógica de uma consulta
+    public void excluir() {
+        this.ativo = false;
     }
 }

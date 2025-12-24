@@ -67,6 +67,8 @@ public class PacienteController {
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         pacienteService.deletar(id);
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 }
