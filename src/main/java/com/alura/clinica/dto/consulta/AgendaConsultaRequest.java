@@ -19,4 +19,6 @@ public class AgendaConsultaRequest {
     @Future
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
     private LocalDateTime data;
+
+    private String especialidade;
 }

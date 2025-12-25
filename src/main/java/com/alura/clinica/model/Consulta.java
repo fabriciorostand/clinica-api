@@ -27,7 +27,9 @@ public class Consulta {
 
     private LocalDateTime data;
 
-    private Boolean ativo;
+    @Column(name = "motivo_cancelamento")
+    @Enumerated(EnumType.STRING)
+    private MotivoCancelamento motivoCancelamento;
 
     // Construtor que inicializa uma Consulta a partir de um AgendaConsultaRequest
     public Consulta(AgendaConsultaRequest request) {
@@ -50,8 +52,7 @@ public class Consulta {
         }
     }
 
-    // Metodo para exclusão lógica de uma consulta
-    public void excluir() {
-        this.ativo = false;
+    public void cancelar(MotivoCancelamento motivo) {
+        this.motivoCancelamento = motivo;
     }
 }

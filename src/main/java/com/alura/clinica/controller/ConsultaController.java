@@ -1,6 +1,7 @@
 package com.alura.clinica.controller;
 
 import com.alura.clinica.dto.consulta.AgendaConsultaRequest;
+import com.alura.clinica.dto.consulta.CancelamentoConsultaRequest;
 import com.alura.clinica.dto.consulta.ConsultaResponse;
 import com.alura.clinica.model.Consulta;
 import com.alura.clinica.service.ConsultaService;
@@ -60,9 +61,9 @@ public class ConsultaController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping
-    public ResponseEntity<Void> excluir(@PathVariable Long id) {
-        consultaService.excluir(id);
+    @DeleteMapping()
+    public ResponseEntity<Void> cancelar(@RequestBody @Valid CancelamentoConsultaRequest request) {
+        consultaService.cancelar(request);
 
         return ResponseEntity
                 .noContent()

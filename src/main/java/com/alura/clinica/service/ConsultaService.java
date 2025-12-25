@@ -1,9 +1,9 @@
 package com.alura.clinica.service;
 
 import com.alura.clinica.dto.consulta.AgendaConsultaRequest;
+import com.alura.clinica.dto.consulta.CancelamentoConsultaRequest;
 import com.alura.clinica.model.Consulta;
 import com.alura.clinica.model.Medico;
-import com.alura.clinica.model.Paciente;
 import com.alura.clinica.repository.ConsultaRepository;
 import com.alura.clinica.repository.MedicoRepository;
 import com.alura.clinica.repository.PacienteRepository;
@@ -13,6 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -26,32 +28,41 @@ public class ConsultaService {
         Long pacienteId = request.getPacienteId();
         Long medicoId = request.getMedicoId();
 
-        Paciente paciente = pacienteRepository.findById(pacienteId)
-                .orElseThrow(EntityNotFoundException::new);
-
-        if (paciente.getAtivo() != true) {
-            throw new IllegalStateException("Erro: Paciente inativo.");
+        if (!pacienteRepository.existsById(pacienteId)) {
+            throw new EntityNotFoundException();
         }
 
-        Medico medico = medicoRepository.findById(medicoId)
-                .orElseThrow(EntityNotFoundException::new);
-
-        if (medico.getAtivo() != true) {
-            throw new IllegalStateException("Erro: Médico inativo.");
+        if (medicoId != null && !medicoRepository.existsById(medicoId)) {
+            throw new EntityNotFoundException();
         }
+
+        var paciente = pacienteRepository.getReferenceById(pacienteId);
+        var medico = escolherMedico(request);
 
         Consulta consulta = new Consulta(request);
 
         return consultaRepository.save(consulta);
     }
 
-     public Consulta buscarPorId(Long id) {
+    private Medico escolherMedico(AgendaConsultaRequest request) {
+        if (request.getMedicoId() != null) {
+            return medicoRepository.getReferenceById(request.getMedicoId());
+        }
+
+        if (request.getEspecialidade() == null) {
+            throw new IllegalArgumentException("Especialidade é obrigatória quando médico não for informado.");
+        }
+
+        return medicoRepository.escolherMedicoAleatorioLivreNaData(request.getData(), request.getEspecialidade());
+    }
+
+    public Consulta buscarPorId(Long id) {
         return consultaRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
      }
 
     public Page<Consulta> listar(Pageable paginacao) {
-        return consultaRepository.findByAtivoTrue(paginacao);
+        return consultaRepository.findAll(paginacao);
     }
 
     public Consulta atualizar(Long id, AgendaConsultaRequest request) {
@@ -63,10 +74,20 @@ public class ConsultaService {
         return consulta;
     }
 
-    public void excluir(Long id) {
-        Consulta consulta = consultaRepository.findById(id)
-                .orElseThrow(EntityNotFoundException::new);
+    @Transactional
+    public void cancelar(CancelamentoConsultaRequest request) {
+        Long id = request.getConsultaId();
 
-        consulta.excluir();
+        if (!consultaRepository.existsById(id)) {
+            throw new EntityNotFoundException();
+        }
+
+        Consulta consulta = consultaRepository.getReferenceById(id);
+
+        if (LocalDateTime.now().isAfter(consulta.getData().minusHours(24))) {
+            throw new IllegalStateException("Consulta não pode ser cancelada com menos de 24 horas de antecedência.");
+        }
+
+        consulta.cancelar(request.getMotivo());
     }
 }
