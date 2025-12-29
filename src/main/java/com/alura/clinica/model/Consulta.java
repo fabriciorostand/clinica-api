@@ -31,13 +31,6 @@ public class Consulta {
     @Enumerated(EnumType.STRING)
     private MotivoCancelamento motivoCancelamento;
 
-    // Construtor que inicializa uma Consulta a partir de um AgendaConsultaRequest
-    public Consulta(AgendaConsultaRequest request) {
-//        this.paciente.getId() = request.getPacienteId();
-//        this.medico.getId() = request.getMedicoId();
-        this.data = request.getData();
-    }
-
     public void atualizarDados(AgendaConsultaRequest request) {
         if (request.getPacienteId() != null) {
 //            this.paciente.getId() = request.getPacienteId();

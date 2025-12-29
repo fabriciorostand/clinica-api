@@ -7,6 +7,9 @@ import com.alura.clinica.model.Medico;
 import com.alura.clinica.repository.ConsultaRepository;
 import com.alura.clinica.repository.MedicoRepository;
 import com.alura.clinica.repository.PacienteRepository;
+import com.alura.clinica.validations.ValidadorAgendamentoConsulta;
+import com.alura.clinica.validations.ValidadorMedicoComOutraConsulta;
+import com.alura.clinica.validations.ValidadorPacienteSemOutraConsultaNoDia;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,11 +26,13 @@ public class ConsultaService {
     private final ConsultaRepository consultaRepository;
     private final PacienteRepository pacienteRepository;
     private final MedicoRepository medicoRepository;
+    private final List<ValidadorAgendamentoConsulta> validadores;
 
     @Transactional
     public Consulta agendar(AgendaConsultaRequest request) {
         Long pacienteId = request.getPacienteId();
         Long medicoId = request.getMedicoId();
+        LocalDateTime data = request.getData();
 
         if (!pacienteRepository.existsById(pacienteId)) {
             throw new EntityNotFoundException();
@@ -36,10 +42,12 @@ public class ConsultaService {
             throw new EntityNotFoundException();
         }
 
+        validadores.forEach(v -> v.validar(request));
+
         var paciente = pacienteRepository.getReferenceById(pacienteId);
         var medico = escolherMedico(request);
 
-        Consulta consulta = new Consulta(request);
+        var consulta = new Consulta(null, medico, paciente, data, null);
 
         return consultaRepository.save(consulta);
     }
