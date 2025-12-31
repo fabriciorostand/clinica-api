@@ -5,7 +5,7 @@ import com.alura.clinica.dto.medico.CadastroMedicoRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity
+@Entity(name = "Medico")
 @Table(name = "medicos")
 @NoArgsConstructor @AllArgsConstructor
 @Getter

@@ -1,11 +1,13 @@
 package com.alura.clinica.dto.consulta;
 
 import com.alura.clinica.model.Consulta;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@JsonPropertyOrder({"id", "medicoId", "pacienteId", "data"})
 public class ConsultaResponse {
     private final Long id;
 
@@ -18,8 +20,8 @@ public class ConsultaResponse {
     // Construtor que converte Consulta para ConsultaResponse
     public ConsultaResponse(Consulta consulta) {
         this.id = consulta.getId();
-        this.pacienteId = consulta.getId();
-        this.medicoId = consulta.getId();
+        this.medicoId = consulta.getMedico().getId();
+        this.pacienteId = consulta.getPaciente().getId();
         this.data = consulta.getData();
     }
 }

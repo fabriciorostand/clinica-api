@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 
 @Getter
 public class AgendaConsultaRequest {
-    @NotNull
     private Long medicoId;
 
     @NotNull

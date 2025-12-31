@@ -2,14 +2,14 @@ package com.alura.clinica.service;
 
 import com.alura.clinica.dto.consulta.AgendaConsultaRequest;
 import com.alura.clinica.dto.consulta.CancelamentoConsultaRequest;
+import com.alura.clinica.exception.ValidacaoException;
 import com.alura.clinica.model.Consulta;
 import com.alura.clinica.model.Medico;
 import com.alura.clinica.repository.ConsultaRepository;
 import com.alura.clinica.repository.MedicoRepository;
 import com.alura.clinica.repository.PacienteRepository;
-import com.alura.clinica.validations.ValidadorAgendamentoConsulta;
-import com.alura.clinica.validations.ValidadorMedicoComOutraConsulta;
-import com.alura.clinica.validations.ValidadorPacienteSemOutraConsultaNoDia;
+import com.alura.clinica.validations.agendamento.ValidadorAgendamentoConsulta;
+import com.alura.clinica.validations.cancelamento.ValidadorCancelamentoConsulta;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,7 +26,8 @@ public class ConsultaService {
     private final ConsultaRepository consultaRepository;
     private final PacienteRepository pacienteRepository;
     private final MedicoRepository medicoRepository;
-    private final List<ValidadorAgendamentoConsulta> validadores;
+    private final List<ValidadorAgendamentoConsulta> validadoresAgendamento;
+    private final List<ValidadorCancelamentoConsulta> validadoresCancelamento;
 
     @Transactional
     public Consulta agendar(AgendaConsultaRequest request) {
@@ -35,17 +36,21 @@ public class ConsultaService {
         LocalDateTime data = request.getData();
 
         if (!pacienteRepository.existsById(pacienteId)) {
-            throw new EntityNotFoundException();
+            throw new ValidacaoException("Id do paciente informado não existe");
         }
 
         if (medicoId != null && !medicoRepository.existsById(medicoId)) {
-            throw new EntityNotFoundException();
+            throw new ValidacaoException("Id do médico informado não existe");
         }
 
-        validadores.forEach(v -> v.validar(request));
+        validadoresAgendamento.forEach(v -> v.validar(request));
 
         var paciente = pacienteRepository.getReferenceById(pacienteId);
         var medico = escolherMedico(request);
+
+        if (medico == null) {
+            throw new ValidacaoException("Nenhum médico disponível para esse horário nesta data");
+        }
 
         var consulta = new Consulta(null, medico, paciente, data, null);
 
@@ -58,7 +63,7 @@ public class ConsultaService {
         }
 
         if (request.getEspecialidade() == null) {
-            throw new IllegalArgumentException("Especialidade é obrigatória quando médico não for informado.");
+            throw new ValidacaoException("Especialidade é obrigatória quando médico não for informado.");
         }
 
         return medicoRepository.escolherMedicoAleatorioLivreNaData(request.getData(), request.getEspecialidade());
@@ -87,14 +92,12 @@ public class ConsultaService {
         Long id = request.getConsultaId();
 
         if (!consultaRepository.existsById(id)) {
-            throw new EntityNotFoundException();
+            throw new ValidacaoException("Id da consulta informado não existe");
         }
 
-        Consulta consulta = consultaRepository.getReferenceById(id);
+        validadoresCancelamento.forEach(v -> v.validar(request));
 
-        if (LocalDateTime.now().isAfter(consulta.getData().minusHours(24))) {
-            throw new IllegalStateException("Consulta não pode ser cancelada com menos de 24 horas de antecedência.");
-        }
+        var consulta = consultaRepository.getReferenceById(id);
 
         consulta.cancelar(request.getMotivo());
     }

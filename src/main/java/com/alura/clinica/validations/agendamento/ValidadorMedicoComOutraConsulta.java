@@ -1,6 +1,7 @@
-package com.alura.clinica.validations;
+package com.alura.clinica.validations.agendamento;
 
 import com.alura.clinica.dto.consulta.AgendaConsultaRequest;
+import com.alura.clinica.exception.ValidacaoException;
 import com.alura.clinica.repository.ConsultaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -14,10 +15,10 @@ public class ValidadorMedicoComOutraConsulta implements ValidadorAgendamentoCons
         var medicoId = request.getMedicoId();
         var consultaData = request.getData();
 
-        var medicoPossuiOutraConsultaNoMesmoHorario = consultaRepository.existsByMedicoIdAndData(medicoId, consultaData);
+        var medicoPossuiOutraConsultaNoMesmoHorario = consultaRepository.existsByMedicoIdAndDataAndMotivoCancelamentoIsNull(medicoId, consultaData);
 
         if (medicoPossuiOutraConsultaNoMesmoHorario) {
-            throw new IllegalStateException("Medico já possui outra consulta no mesmo horario");
+            throw new ValidacaoException("Medico já possui outra consulta no mesmo horario");
         }
     }
 }

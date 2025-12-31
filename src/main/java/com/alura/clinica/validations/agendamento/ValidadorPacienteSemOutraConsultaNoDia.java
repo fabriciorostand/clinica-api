@@ -1,6 +1,7 @@
-package com.alura.clinica.validations;
+package com.alura.clinica.validations.agendamento;
 
 import com.alura.clinica.dto.consulta.AgendaConsultaRequest;
+import com.alura.clinica.exception.ValidacaoException;
 import com.alura.clinica.repository.ConsultaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -18,7 +19,7 @@ public class ValidadorPacienteSemOutraConsultaNoDia implements ValidadorAgendame
         var pacientePossuiOutraConsultaNoDia = consultaRepository.existsByPacienteIdAndDataBetween(pacienteId, primeiroHorario, ultimoHorario);
 
         if (pacientePossuiOutraConsultaNoDia) {
-            throw new IllegalStateException("Paciente já possui outra consulta agendada no mesmo dia");
+            throw new ValidacaoException("Paciente já possui outra consulta agendada no mesmo dia");
         }
     }
 }

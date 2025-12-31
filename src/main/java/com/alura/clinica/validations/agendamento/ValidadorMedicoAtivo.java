@@ -1,6 +1,7 @@
-package com.alura.clinica.validations;
+package com.alura.clinica.validations.agendamento;
 
 import com.alura.clinica.dto.consulta.AgendaConsultaRequest;
+import com.alura.clinica.exception.ValidacaoException;
 import com.alura.clinica.repository.MedicoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -19,7 +20,7 @@ public class ValidadorMedicoAtivo implements ValidadorAgendamentoConsulta {
         var medicoEstaAtivo = medicoRepository.findAtivoById(medicoId);
 
         if (!medicoEstaAtivo) {
-            throw new IllegalStateException("Consulta não pode ser agendada com um médico inativo");
+            throw new ValidacaoException("Consulta não pode ser agendada com um médico inativo");
         }
     }
 }

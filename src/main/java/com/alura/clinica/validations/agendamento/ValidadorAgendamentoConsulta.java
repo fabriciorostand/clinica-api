@@ -1,4 +1,4 @@
-package com.alura.clinica.validations;
+package com.alura.clinica.validations.agendamento;
 
 import com.alura.clinica.dto.consulta.AgendaConsultaRequest;
 
