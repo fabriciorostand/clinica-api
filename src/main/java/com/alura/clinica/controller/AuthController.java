@@ -1,9 +1,9 @@
 package com.alura.clinica.controller;
 
-import com.alura.clinica.dto.auth.LoginRequest;
-import com.alura.clinica.model.Usuario;
-import com.alura.clinica.security.TokenJWTResponse;
-import com.alura.clinica.security.TokenService;
+import com.alura.clinica.domain.usuario.dto.LoginRequest;
+import com.alura.clinica.domain.usuario.Usuario;
+import com.alura.clinica.infra.security.TokenJWTResponse;
+import com.alura.clinica.infra.security.TokenService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -1,11 +1,12 @@
 package com.alura.clinica.controller;
 
-import com.alura.clinica.dto.medico.AtualizacaoMedicoRequest;
-import com.alura.clinica.dto.medico.CadastroMedicoRequest;
-import com.alura.clinica.dto.medico.ListagemMedicoResponse;
-import com.alura.clinica.dto.medico.MedicoResponse;
-import com.alura.clinica.model.Medico;
-import com.alura.clinica.service.MedicoService;
+import com.alura.clinica.domain.medico.dto.AtualizacaoMedicoRequest;
+import com.alura.clinica.domain.medico.dto.CadastroMedicoRequest;
+import com.alura.clinica.domain.medico.dto.ListagemMedicoResponse;
+import com.alura.clinica.domain.medico.dto.MedicoResponse;
+import com.alura.clinica.domain.medico.Medico;
+import com.alura.clinica.domain.medico.MedicoService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RestController
 @RequestMapping("/api/medicos")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearer-key")
 public class MedicoController {
     private final MedicoService medicoService;
 

@@ -1,10 +1,11 @@
 package com.alura.clinica.controller;
 
-import com.alura.clinica.dto.consulta.AgendaConsultaRequest;
-import com.alura.clinica.dto.consulta.CancelamentoConsultaRequest;
-import com.alura.clinica.dto.consulta.ConsultaResponse;
-import com.alura.clinica.model.Consulta;
-import com.alura.clinica.service.ConsultaService;
+import com.alura.clinica.domain.consulta.dto.AgendaConsultaRequest;
+import com.alura.clinica.domain.consulta.dto.CancelamentoConsultaRequest;
+import com.alura.clinica.domain.consulta.dto.ConsultaResponse;
+import com.alura.clinica.domain.consulta.Consulta;
+import com.alura.clinica.domain.consulta.ConsultaService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RestController
 @RequestMapping("/api/consultas")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearer-key")
 public class ConsultaController {
     private final ConsultaService consultaService;
 
