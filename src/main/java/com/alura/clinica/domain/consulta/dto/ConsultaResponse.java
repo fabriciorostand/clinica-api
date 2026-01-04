@@ -2,11 +2,13 @@ package com.alura.clinica.domain.consulta.dto;
 
 import com.alura.clinica.domain.consulta.Consulta;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@AllArgsConstructor
 @JsonPropertyOrder({"id", "medicoId", "pacienteId", "data"})
 public class ConsultaResponse {
     private final Long id;
