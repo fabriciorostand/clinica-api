@@ -1,0 +1,18 @@
+services:
+  api:
+    build: .
+    image: clinica_api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+  db:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_DATABASE: clinica_api
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - mysql.clinica:/var/lib/mysql
+volumes:
+  mysql.clinica:

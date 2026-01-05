@@ -65,7 +65,9 @@ class PacienteControllerTest {
                 true
         );
 
-        when(pacienteService.cadastrar(any())).thenReturn(paciente);
+        var pacienteResponse = new PacienteResponse(paciente);
+
+        when(pacienteService.cadastrar(any())).thenReturn(pacienteResponse);
 
         var cadastroRequest = new CadastroPacienteRequest(
                 "Fulano",
@@ -84,7 +86,7 @@ class PacienteControllerTest {
                 .andReturn().getResponse();
 
         var jsonEsperado = pacienteResponseJson.write(
-                new PacienteResponse(paciente)
+                pacienteResponse
         ).getJson();
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());

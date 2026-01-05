@@ -25,42 +25,34 @@ public class ConsultaController {
 
     @PostMapping
     public ResponseEntity<ConsultaResponse> agendar(@RequestBody @Valid AgendaConsultaRequest request, UriComponentsBuilder uriBuilder) {
-        Consulta consulta = consultaService.agendar(request);
-
-        ConsultaResponse response = new ConsultaResponse(consulta);
+        var consulta = consultaService.agendar(request);
 
         var uri = uriBuilder.path("/api/consultas/{id}").buildAndExpand(consulta.getId()).toUri();
 
         return ResponseEntity
                 .created(uri)
-                .body(response);
+                .body(consulta);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ConsultaResponse> buscarPorId(@PathVariable Long id) {
-        Consulta consulta = consultaService.buscarPorId(id);
+        var consulta = consultaService.buscarPorId(id);
 
-        ConsultaResponse response = new ConsultaResponse(consulta);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(consulta);
     }
 
     @GetMapping
     public ResponseEntity<Page<ConsultaResponse>> listar(@PageableDefault(size = 10, sort = {"data"}, direction = Sort.Direction.DESC) Pageable paginacao) {
-        Page<Consulta> consultas = consultaService.listar(paginacao);
+        var consultas = consultaService.listar(paginacao);
 
-        Page<ConsultaResponse> response = consultas.map(ConsultaResponse::new);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(consultas);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ConsultaResponse> atualizar(@PathVariable Long id, AgendaConsultaRequest request) {
-        Consulta consulta = consultaService.atualizar(id, request);
+        var consulta = consultaService.atualizar(id, request);
 
-        ConsultaResponse response = new ConsultaResponse(consulta);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(consulta);
     }
 
     @DeleteMapping()

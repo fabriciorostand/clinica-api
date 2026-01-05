@@ -27,42 +27,34 @@ public class PacienteController {
     // Métodos
     @PostMapping
     public ResponseEntity<PacienteResponse> cadastrar(@RequestBody @Valid CadastroPacienteRequest request, UriComponentsBuilder uriBuilder) {
-        Paciente paciente = pacienteService.cadastrar(request);
+        var paciente = pacienteService.cadastrar(request);
 
         var uri = uriBuilder.path("/api/pacientes/{id}").buildAndExpand(paciente.getId()).toUri();
 
-        PacienteResponse response = new PacienteResponse(paciente);
-
         return ResponseEntity
                 .created(uri)
-                .body(response);
+                .body(paciente);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<PacienteResponse> buscarPorId(@PathVariable Long id) {
-        Paciente paciente = pacienteService.buscarPorId(id);
+        var paciente = pacienteService.buscarPorId(id);
 
-        PacienteResponse response = new PacienteResponse(paciente);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(paciente);
     }
 
     @GetMapping
     public ResponseEntity<Page<ListagemPacienteResponse>> listar(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao) {
-        Page<Paciente> lista = pacienteService.listar(paginacao);
+        var pacientes = pacienteService.listar(paginacao);
 
-        Page<ListagemPacienteResponse> response = lista.map(ListagemPacienteResponse::new);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(pacientes);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<PacienteResponse> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizacaoPacienteRequest request) {
-        Paciente paciente = pacienteService.atualizar(id, request);
+        var paciente = pacienteService.atualizar(id, request);
 
-        PacienteResponse response = new PacienteResponse(paciente);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(paciente);
     }
 
     @DeleteMapping("/{id}")

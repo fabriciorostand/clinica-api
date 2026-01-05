@@ -12,7 +12,8 @@ import java.util.List;
 
 @Entity(name = "Usuario")
 @Table(name = "usuarios")
-@NoArgsConstructor @AllArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @EqualsAndHashCode(of = "id")
 public class Usuario implements UserDetails {
@@ -21,6 +22,11 @@ public class Usuario implements UserDetails {
     private Long id;
     private String email;
     private String senha;
+
+    public Usuario(String email, String senhaCriptografada) {
+        this.email = email;
+        this.senha = senhaCriptografada;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

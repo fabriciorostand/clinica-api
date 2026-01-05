@@ -2,6 +2,8 @@ package com.alura.clinica.domain.paciente;
 
 import com.alura.clinica.domain.paciente.dto.AtualizacaoPacienteRequest;
 import com.alura.clinica.domain.paciente.dto.CadastroPacienteRequest;
+import com.alura.clinica.domain.paciente.dto.ListagemPacienteResponse;
+import com.alura.clinica.domain.paciente.dto.PacienteResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,29 +19,33 @@ public class PacienteService {
 
     // Métodos
     @Transactional
-    public Paciente cadastrar(CadastroPacienteRequest request) {
-        Paciente paciente = new Paciente(request);
+    public PacienteResponse cadastrar(CadastroPacienteRequest request) {
+        var paciente = new Paciente(request);
 
-        return pacienteRepository.save(paciente);
+        return new PacienteResponse(pacienteRepository.save(paciente));
     }
 
-    public Paciente buscarPorId(Long id) {
-        return pacienteRepository.findById(id)
+    public PacienteResponse buscarPorId(Long id) {
+        var paciente = pacienteRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
+
+        return new PacienteResponse(paciente);
     }
 
-    public Page<Paciente> listar(Pageable paginacao) {
-        return pacienteRepository.findAllByAtivoTrue(paginacao);
+    public Page<ListagemPacienteResponse> listar(Pageable paginacao) {
+        return pacienteRepository
+                .findAllByAtivoTrue(paginacao)
+                .map(ListagemPacienteResponse::new);
     }
 
     @Transactional
-    public Paciente atualizar(Long id, AtualizacaoPacienteRequest request) {
-        Paciente paciente = pacienteRepository.findById(id)
+    public PacienteResponse atualizar(Long id, AtualizacaoPacienteRequest request) {
+        var paciente = pacienteRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
 
         paciente.atualizarDados(request);
 
-        return paciente;
+        return new PacienteResponse(paciente);
     }
 
     @Transactional

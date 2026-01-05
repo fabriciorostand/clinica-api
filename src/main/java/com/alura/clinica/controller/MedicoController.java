@@ -26,42 +26,34 @@ public class MedicoController {
     // Métodos
     @PostMapping
     public ResponseEntity<MedicoResponse> cadastrar(@RequestBody @Valid CadastroMedicoRequest request, UriComponentsBuilder uriBuilder) {
-        Medico medico = medicoService.cadastrar(request);
-
-        MedicoResponse response = new MedicoResponse(medico);
+        var medico = medicoService.cadastrar(request);
 
         var uri = uriBuilder.path("/api/medicos/{id}").buildAndExpand(medico.getId()).toUri();
 
         return ResponseEntity
                 .created(uri)
-                .body(response);
+                .body(medico);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<MedicoResponse> buscarPorId(@PathVariable Long id) {
-        Medico medico = medicoService.buscarPorId(id);
+        var medico = medicoService.buscarPorId(id);
 
-        MedicoResponse response = new MedicoResponse(medico);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(medico);
     }
 
     @GetMapping
     public ResponseEntity<Page<ListagemMedicoResponse>> listar(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao) {
-        Page<Medico> lista = medicoService.listar(paginacao);
+        var medicos = medicoService.listar(paginacao);
 
-        Page<ListagemMedicoResponse> response = lista.map(ListagemMedicoResponse::new);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(medicos);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<MedicoResponse> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizacaoMedicoRequest request) {
-        Medico medico = medicoService.atualizar(id, request);
+        var medico = medicoService.atualizar(id, request);
 
-        MedicoResponse response = new MedicoResponse(medico);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(medico);
     }
 
     @DeleteMapping("/{id}")

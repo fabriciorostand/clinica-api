@@ -8,10 +8,10 @@ import lombok.Getter;
 // Define a ordem das propriedades na serialização JSON
 @JsonPropertyOrder({"id", "nome", "email", "telefone"})
 public class ListagemPacienteResponse {
-    private Long id;
-    private String nome;
-    private String email;
-    private String cpf;
+    private final Long id;
+    private final String nome;
+    private final String email;
+    private final String cpf;
 
     // Construtor que converte Paciente para PacienteResponse
     public ListagemPacienteResponse(Paciente paciente) {

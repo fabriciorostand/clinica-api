@@ -69,7 +69,9 @@ class ConsultaControllerTest {
                 null
         );
 
-        when(consultaService.agendar(any())).thenReturn(consulta);
+        var consultaResponse = new ConsultaResponse(consulta);
+
+        when(consultaService.agendar(any())).thenReturn(consultaResponse);
 
         var agendamentoRequest = new AgendaConsultaRequest(
                 1L,
@@ -87,7 +89,7 @@ class ConsultaControllerTest {
                 .andReturn().getResponse();
 
         var jsonEsperado = consultaResponseJson.write(
-                new ConsultaResponse(consulta)
+                consultaResponse
         ).getJson();
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());

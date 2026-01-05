@@ -2,6 +2,8 @@ package com.alura.clinica.domain.medico;
 
 import com.alura.clinica.domain.medico.dto.AtualizacaoMedicoRequest;
 import com.alura.clinica.domain.medico.dto.CadastroMedicoRequest;
+import com.alura.clinica.domain.medico.dto.ListagemMedicoResponse;
+import com.alura.clinica.domain.medico.dto.MedicoResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,29 +19,33 @@ public class MedicoService {
 
     // Métodos
     @Transactional
-    public Medico cadastrar(CadastroMedicoRequest request) {
+    public MedicoResponse cadastrar(CadastroMedicoRequest request) {
         Medico medico = new Medico(request);
 
-        return medicoRepository.save(medico);
+        return new MedicoResponse(medicoRepository.save(medico));
     }
 
-    public Medico buscarPorId(Long id) {
-        return medicoRepository.findById(id)
+    public MedicoResponse buscarPorId(Long id) {
+        var consulta = medicoRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
+
+        return new MedicoResponse(consulta);
     }
 
-    public Page<Medico> listar(Pageable paginacao) {
-        return medicoRepository.findAllByAtivoTrue(paginacao);
+    public Page<ListagemMedicoResponse> listar(Pageable paginacao) {
+        return medicoRepository
+                .findAllByAtivoTrue(paginacao)
+                .map(ListagemMedicoResponse::new);
     }
 
     @Transactional
-    public Medico atualizar(Long id, AtualizacaoMedicoRequest request) {
-        Medico medico = medicoRepository.findById(id)
+    public MedicoResponse atualizar(Long id, AtualizacaoMedicoRequest request) {
+        var medico = medicoRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
 
         medico.atualizarDados(request);
 
-        return medico;
+        return new MedicoResponse(medico);
     }
 
     @Transactional

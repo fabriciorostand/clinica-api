@@ -2,6 +2,7 @@ package com.alura.clinica.domain.consulta;
 
 import com.alura.clinica.domain.consulta.dto.AgendaConsultaRequest;
 import com.alura.clinica.domain.consulta.dto.CancelamentoConsultaRequest;
+import com.alura.clinica.domain.consulta.dto.ConsultaResponse;
 import com.alura.clinica.domain.consulta.validations.ValidacaoException;
 import com.alura.clinica.domain.medico.Medico;
 import com.alura.clinica.domain.medico.MedicoRepository;
@@ -28,7 +29,7 @@ public class ConsultaService {
     private final List<ValidadorCancelamentoConsulta> validadoresCancelamento;
 
     @Transactional
-    public Consulta agendar(AgendaConsultaRequest request) {
+    public ConsultaResponse agendar(AgendaConsultaRequest request) {
         Long pacienteId = request.getPacienteId();
         Long medicoId = request.getMedicoId();
         LocalDateTime data = request.getData();
@@ -52,7 +53,7 @@ public class ConsultaService {
 
         var consulta = new Consulta(null, medico, paciente, data, null);
 
-        return consultaRepository.save(consulta);
+        return new ConsultaResponse(consultaRepository.save(consulta));
     }
 
     private Medico escolherMedico(AgendaConsultaRequest request) {
@@ -67,22 +68,27 @@ public class ConsultaService {
         return medicoRepository.escolherMedicoAleatorioLivreNaData(request.getData(), request.getEspecialidade());
     }
 
-    public Consulta buscarPorId(Long id) {
-        return consultaRepository.findById(id)
+    public ConsultaResponse buscarPorId(Long id) {
+        var consulta = consultaRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
+
+        return new ConsultaResponse(consulta);
      }
 
-    public Page<Consulta> listar(Pageable paginacao) {
-        return consultaRepository.findAll(paginacao);
+    public Page<ConsultaResponse> listar(Pageable paginacao) {
+        return consultaRepository
+                .findAll(paginacao)
+                .map(ConsultaResponse::new);
     }
 
-    public Consulta atualizar(Long id, AgendaConsultaRequest request) {
-        Consulta consulta = consultaRepository.findById(id)
+    @Transactional
+    public ConsultaResponse atualizar(Long id, AgendaConsultaRequest request) {
+        var consulta = consultaRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
 
         consulta.atualizarDados(request);
 
-        return consulta;
+        return new ConsultaResponse(consulta);
     }
 
     @Transactional
