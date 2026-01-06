@@ -1,0 +1,6 @@
+services:
+  api:
+    build: .
+    image: clinica_api
+  db:
+    image: mysql
