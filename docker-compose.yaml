@@ -1,12 +1,12 @@
 services:
   api:
-    image: fabriciorostand/clinica_api
+    image: fabriciorostand/clinica_api:latest
     ports:
       - "8080:8080"
     depends_on:
       - db
   db:
-    image: fabriciorostand/mysql
+    image: fabriciorostand/mysql:8
     restart: always
     environment:
       MYSQL_DATABASE: clinica_api
