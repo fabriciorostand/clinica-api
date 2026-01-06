@@ -1,6 +1,5 @@
 package com.alura.clinica.domain.consulta.validations.cancelamento;
 
-import com.alura.clinica.domain.consulta.dto.CancelamentoConsultaRequest;
 import com.alura.clinica.domain.consulta.validations.ValidacaoException;
 import com.alura.clinica.domain.consulta.ConsultaRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,11 +10,11 @@ import java.time.LocalDateTime;
 
 @Component
 @RequiredArgsConstructor
-public class ValidadorAntecedenciaCancelamento implements ValidadorCancelamentoConsulta{
+public class ValidadorAntecedenciaCancelamento implements ValidadorCancelamentoConsulta {
     private final ConsultaRepository consultaRepository;
 
-    public void validar(CancelamentoConsultaRequest request) {
-        var consulta = consultaRepository.getReferenceById(request.getConsultaId());
+    public void validar(Long id) {
+        var consulta = consultaRepository.getReferenceById(id);
 
         var dataConsulta = consulta.getData();
         var dataAtual = LocalDateTime.now();

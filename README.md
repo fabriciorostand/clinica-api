@@ -1,6 +1,6 @@
 ## 📋 Descrição
 
-API REST para gestão de clínica, permitindo controle de médicos, pacientes e suas informações. Desenvolvido com Spring Boot, Java 21 e MySQL, oferecendo endpoints para gerenciamento completo de médicos e pacientes com suporte a paginação, exclusão lógica e autenticação segura via JWT.
+API REST para gestão de clínica, permitindo controle de médicos, pacientes e suas informações. Desenvolvido com Spring Boot, Java 21 e MySQL, oferecendo endpoints para gerenciamento de médicos, pacientes e consultas.
 
 ## 🚀 Tecnologias Utilizadas
 
@@ -14,10 +14,23 @@ API REST para gestão de clínica, permitindo controle de médicos, pacientes e 
 - **Flyway** - Versionamento e migração de banco de dados
 - **Lombok** - Redução de código repetitivo
 - **Spring Boot DevTools** - Automatização da reinicialização da aplicação durante desenvolvimento
+- **SpringDoc OpenAPI** - Documentação automática de API com Swagger UI
+- **Auth0 JWT** - Geração e validação de tokens JWT
 
 ## 📦 Pré-requisitos
 
 Antes de começar, certifique-se de ter instalado em sua máquina:
+
+- **Git** (para clonar o repositório)
+  - Verifique a instalação: `git --version`
+  - Download: [Git](https://git-scm.com/downloads)
+
+Para rodar com Docker:
+
+- **Docker** - [Instale aqui](https://www.docker.com/products/docker-desktop)
+- **Docker Compose** - Geralmente incluído com Docker Desktop  
+
+Para rodar localmente:
 
 - **Java Development Kit (JDK) 21** ou superior
   - Verifique a instalação: `java -version`
@@ -28,46 +41,22 @@ Antes de começar, certifique-se de ter instalado em sua máquina:
   - Verifique a instalação: `mvn -version`
   - Download: [Apache Maven](https://maven.apache.org/download.cgi)
 
-- **MySQL 8.0+** (acesso ao servidor)
+- **MySQL 8.0+**
   - O projeto está configurado para conectar a um banco MySQL
   - Certifique-se de ter as credenciais corretas
 
-- **Git** (para clonar o repositório)
-  - Verifique a instalação: `git --version`
-  - Download: [Git](https://git-scm.com/downloads)
-
 ## 🚀 Instruções de Inicialização
 
-### 1. Configurar Variáveis de Ambiente
+### 1. Configurar o Projeto
 
-A aplicação utiliza variáveis de ambiente para configurar credenciais sensíveis. Configure as seguintes variáveis:
-
-**Windows (PowerShell):**
-```powershell
-$env:DB_URL="jdbc:mysql://localhost:3306/clinica"
-$env:DB_USERNAME="root"
-$env:DB_PASSWORD="sua_senha_aqui"
-$env:JWT_SECRET="sua_chave_secreta_jwt_aqui"
-```
-
-**Linux/Mac (Bash):**
-```bash
-export DB_URL="jdbc:mysql://localhost:3306/clinica"
-export DB_USERNAME="root"
-export DB_PASSWORD="sua_senha_aqui"
-export JWT_SECRET="sua_chave_secreta_jwt_aqui"
-```
-
-Ou edite o arquivo `src/main/resources/application.properties` diretamente:
+Edite o arquivo `application.properties`:
 
 ```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/clinica
+spring.datasource.url=jdbc:mysql://db:3306/clinica_api
 spring.datasource.username=root
 spring.datasource.password=SUA_SENHA
 api.security.token.secret=SUA_CHAVE_JWT
 ```
-
-**Nota:** A chave JWT (`JWT_SECRET`) deve ser uma string segura e suficientemente longa para gerar tokens seguros.
 
 ### 2. Instalar Dependências
 
@@ -90,36 +79,70 @@ mvn clean install
 
 ### 3. Executar o Projeto
 
-#### Opção 1: Usando Maven Wrapper (Windows)
+#### Opção 1: Usando Docker
+
+Execute o seguinte comando:
+
+```bash
+docker-compose up -d --build
+```
+
+Para parar: 
+
+```bash
+docker-compose down
+```
+
+#### Opção 2: Localmente
+
+
+O projeto usa o profile `dev` para rodar localmente. Execute um dos comandos:
+
+Windows:
 ```powershell
-.\mvnw.cmd spring-boot:run
+.\mvnw.cmd spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=dev"
 ```
 
-#### Opção 2: Usando Maven Wrapper (Linux/Mac)
+Linux/Mac:
 ```bash
-./mvnw spring-boot:run
+./mvnw spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=dev"
 ```
 
-#### Opção 3: Usando Maven (se instalado)
+Com Maven instalado:
 ```bash
-mvn spring-boot:run
+mvn spring-boot:run -Dspring.profiles.active=dev
 ```
 
-#### Opção 4: Executando o JAR compilado
+Ou com JAR compilado:
 ```bash
-java -jar target/clinica-0.0.1-SNAPSHOT.jar
+java -jar target/clinica-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev
 ```
 
-### 4. Verificar se está funcionando
+### 4. Verificar Execução
 
-Após iniciar o projeto, a aplicação estará disponível em:
-```
-http://localhost:8080
-```
-
-Você deverá ver logs no console indicando que a aplicação foi iniciada com sucesso:
+**Console esperado:**
 ```
 Started ClinicaApplication in X.XXX seconds
+```
+
+**Testar a API:**
+
+Faça uma requisição GET para verificar se a aplicação está respondendo:
+
+```bash
+curl http://localhost:8080/api/teste
+```
+
+Resposta esperada:
+- Status: `200 OK`
+- Body: `OK`
+
+**Acessar documentação:**
+
+A documentação interativa da API está disponível em:
+
+```
+http://localhost:8080/swagger-ui.html
 ```
 
 ## 📁 Estrutura do Projeto
@@ -130,16 +153,32 @@ clinica-api/
 │   ├── main/
 │   │   ├── java/com/alura/clinica/
 │   │   │   ├── controller/               # Controllers REST
-│   │   │   ├── dto/                      # Data Transfer Objects
-│   │   │   ├── model/                    # Entidades JPA
-│   │   │   ├── repository/               # Repositórios JPA
-│   │   │   ├── service/                  # Lógica de negócio
+│   │   │   │   ├── AuthController.java
+│   │   │   │   ├── MedicoController.java
+│   │   │   │   ├── PacienteController.java
+│   │   │   │   └── ConsultaController.java
+│   │   │   │   └── TesteController.java
+│   │   │   ├── domain/                   # Lógica de domínio (entidades, serviços, validações)
+│   │   │   │   ├── medico/
+│   │   │   │   ├── paciente/
+│   │   │   │   ├── consulta/
+│   │   │   │   └── usuario/
+│   │   │   ├── infra/                    # Infraestrutura (segurança, exceções, configurações)
+│   │   │   │   ├── exception/            # Tratamento de erros
+│   │   │   │   ├── security/             # JWT, autenticação e autorização
+│   │   │   │   └── springdoc/            # Configuração de documentação Swagger
 │   │   │   └── ClinicaApplication.java
 │   │   └── resources/
 │   │       ├── application.properties          # Configurações principais
+│   │       ├── application-dev.properties      # Configurações desenvolvimento
+│   │       ├── application-prod.properties     # Configurações produção
+│   │       ├── application-test.properties     # Configurações testes
+│   │       ├── ValidationMessages.properties   # Mensagens de validação
 │   │       └── db/migration/                   # Migrations Flyway
 │   └── test/                             # Testes unitários
-├── pom.xml                               # Configuração Maven
+├── docker-compose.yaml                   # Orquestração de containers (API + MySQL)
+├── Dockerfile                            # Build da imagem da aplicação
+├── pom.xml                               # Configuração do Maven
 └── README.md                             # Este arquivo
 ```
 
@@ -147,7 +186,14 @@ clinica-api/
 
 A API está disponível no prefixo `/api` e oferece os seguintes recursos:
 
+### Teste
+- `GET /api/teste` - Verificar se a API está respondendo (sem autenticação)
+  - Retorna: Status `200 OK` com body `OK`
+
 ### Autenticação
+- `POST /api/auth/register` - Registrar novo usuário
+  - Requer: `email` e `senha`
+  - Retorna: Confirmação de registro
 - `POST /api/auth/login` - Realizar login e obter token JWT
   - Requer: `email` e `senha`
   - Retorna: `token` JWT para autenticação em requisições subsequentes
@@ -170,6 +216,17 @@ A API está disponível no prefixo `/api` e oferece os seguintes recursos:
 - `PUT /api/pacientes/{id}` - Atualizar dados do paciente (requer autenticação)
 - `DELETE /api/pacientes/{id}` - Deletar paciente (requer autenticação, exclusão lógica)
 
+### Consultas
+- `POST /api/consultas` - Agendar nova consulta (requer autenticação)
+  - Requer: `medicoId`, `pacienteId`, `data`
+- `GET /api/consultas/{id}` - Obter detalhes de uma consulta (requer autenticação)
+- `GET /api/consultas` - Listar consultas com paginação (requer autenticação)
+  - Parâmetros: `page`, `size`, `sort`
+  - Padrão: 10 itens por página, ordenado por data (mais recentes primeiro)
+- `PUT /api/consultas/{id}` - Atualizar data/hora da consulta (requer autenticação)
+- `DELETE /api/consultas/{id}` - Cancelar consulta (requer autenticação)
+  - Requer: `motivo` (PACIENTE_DESISTIU, MEDICO_CANCELOU, OUTROS)
+
 ## 💡 Recursos Principais
 
 - **Autenticação JWT**: Sistema seguro de autenticação com tokens JWT
@@ -181,6 +238,9 @@ A API está disponível no prefixo `/api` e oferece os seguintes recursos:
 - **Spring Security**: Integração completa com Spring Security para autorização
 - **Flyway Migrations**: Controle de versão do banco de dados
 - **Lombok**: Redução de código boilerplate nas entidades e DTOs
+- **Swagger UI / OpenAPI**: Documentação interativa da API
+- **Agendamento de Consultas**: Sistema completo de agendamento com validações
+- **Cancelamento de Consultas**: Cancelamento com motivos rastreáveis (paciente desistiu, médico cancelou, outros)
 
 ## 📖 Exemplos de Uso
 
@@ -253,7 +313,7 @@ curl -X DELETE http://localhost:8080/api/medicos/1 \
 
 ## 🔐 Segurança
 
-- Todos os endpoints (exceto `/api/auth/login`) requerem autenticação via token JWT
+- Todos os endpoints (exceto `/api/teste`, `/api/auth/register` e `/api/auth/login`) requerem autenticação via token JWT
 - O token JWT deve ser enviado no header `Authorization: Bearer {token}`
 - A senha do usuário é criptografada no banco de dados
 - A aplicação utiliza Spring Security para controlar o acesso aos recursos
@@ -283,3 +343,10 @@ curl -X DELETE http://localhost:8080/api/medicos/1 \
 - `telefone` (VARCHAR) - Telefone para contato
 - `endereco` (VARCHAR) - Endereço residencial
 - `ativo` (BOOLEAN) - Flag de exclusão lógica
+
+### Tabela: consultas
+- `id` (BIGINT) - Identificador único
+- `medico_id` (BIGINT) - Referência ao médico (FK)
+- `paciente_id` (BIGINT) - Referência ao paciente (FK)
+- `data` (DATETIME) - Data e hora da consulta
+- `motivo_cancelamento` (VARCHAR) - Motivo do cancelamento (PACIENTE_DESISTIU, MEDICO_CANCELOU, OUTROS)

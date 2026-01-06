@@ -92,14 +92,12 @@ public class ConsultaService {
     }
 
     @Transactional
-    public void cancelar(CancelamentoConsultaRequest request) {
-        Long id = request.getConsultaId();
-
+    public void cancelar(Long id, CancelamentoConsultaRequest request) {
         if (!consultaRepository.existsById(id)) {
             throw new ValidacaoException("Id da consulta informado não existe");
         }
 
-        validadoresCancelamento.forEach(v -> v.validar(request));
+        validadoresCancelamento.forEach(v -> v.validar(id));
 
         var consulta = consultaRepository.getReferenceById(id);
 

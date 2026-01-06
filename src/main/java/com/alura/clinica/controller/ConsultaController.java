@@ -3,7 +3,6 @@ package com.alura.clinica.controller;
 import com.alura.clinica.domain.consulta.dto.AgendaConsultaRequest;
 import com.alura.clinica.domain.consulta.dto.CancelamentoConsultaRequest;
 import com.alura.clinica.domain.consulta.dto.ConsultaResponse;
-import com.alura.clinica.domain.consulta.Consulta;
 import com.alura.clinica.domain.consulta.ConsultaService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -55,9 +54,9 @@ public class ConsultaController {
         return ResponseEntity.ok(consulta);
     }
 
-    @DeleteMapping()
-    public ResponseEntity<Void> cancelar(@RequestBody @Valid CancelamentoConsultaRequest request) {
-        consultaService.cancelar(request);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> cancelar(@PathVariable Long id, @RequestBody @Valid CancelamentoConsultaRequest request) {
+        consultaService.cancelar(id, request);
 
         return ResponseEntity
                 .noContent()
