@@ -1,0 +1,5 @@
+# Para o teste sem precisar dar git clone no repositorio
+
+services:
+  api:
+    image: fabriciorostand/clinica_api:latest

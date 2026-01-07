@@ -1,6 +1,7 @@
 services:
   api:
-    image: fabriciorostand/clinica_api:latest
+    build: .
+    image: clinica_api
     ports:
       - "8080:8080"
     depends_on:
@@ -11,7 +12,7 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
   db:
-    image: fabriciorostand/mysql:8
+    image: mysql:8
     restart: always
     environment:
       MYSQL_DATABASE: clinica_api
