@@ -223,7 +223,6 @@ A API está disponível no prefixo `/api` e oferece os seguintes recursos:
 - `GET /api/consultas` - Listar consultas com paginação (requer autenticação)
   - Parâmetros: `page`, `size`, `sort`
   - Padrão: 10 itens por página, ordenado por data (mais recentes primeiro)
-- `PUT /api/consultas/{id}` - Atualizar data/hora da consulta (requer autenticação)
 - `DELETE /api/consultas/{id}` - Cancelar consulta (requer autenticação)
   - Requer: `motivo` (PACIENTE_DESISTIU, MEDICO_CANCELOU, OUTROS)
 
