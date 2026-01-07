@@ -84,13 +84,13 @@ mvn clean install
 Execute o seguinte comando:
 
 ```bash
-docker-compose up -d --build
+docker compose up -d --build
 ```
 
 Para parar: 
 
 ```bash
-docker-compose down
+docker compose down
 ```
 
 #### Opção 2: Localmente
