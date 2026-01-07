@@ -1,6 +1,6 @@
 ## 📋 Descrição
 
-API REST para gestão de clínica, permitindo controle de médicos, pacientes e suas informações. Desenvolvido com Spring Boot, Java 21 e MySQL, oferecendo endpoints para gerenciamento de médicos, pacientes e consultas.
+API REST para gestão de clínica, permitindo controle de médicos, pacientes e suas informações. Desenvolvido com Java, Spring Boot e MySQL, oferecendo endpoints para gerenciamento de médicos, pacientes e consultas.
 
 ## 🚀 Tecnologias Utilizadas
 
@@ -10,12 +10,13 @@ API REST para gestão de clínica, permitindo controle de médicos, pacientes e 
 - **Spring Web** - API REST
 - **Spring Validation** - Validação de dados
 - **Spring Security** - Segurança, autenticação e autorização de usuários
+- **Auth0 JWT** - Geração e validação de tokens JWT
 - **MySQL** - Banco de dados relacional
 - **Flyway** - Versionamento e migração de banco de dados
 - **Lombok** - Redução de código repetitivo
 - **Spring Boot DevTools** - Automatização da reinicialização da aplicação durante desenvolvimento
 - **SpringDoc OpenAPI** - Documentação automática de API com Swagger UI
-- **Auth0 JWT** - Geração e validação de tokens JWT
+- **JUnit 5 e Mockito** - Testes unitários e de integração.
 
 ## 📦 Pré-requisitos
 
@@ -25,11 +26,6 @@ Antes de começar, certifique-se de ter instalado em sua máquina:
   - Verifique a instalação: `git --version`
   - Download: [Git](https://git-scm.com/downloads)
 
-Para rodar com Docker:
-
-- **Docker** - [Instale aqui](https://www.docker.com/products/docker-desktop)
-- **Docker Compose** - Geralmente incluído com Docker Desktop  
-
 Para rodar localmente:
 
 - **Java Development Kit (JDK) 21** ou superior
@@ -38,12 +34,17 @@ Para rodar localmente:
 
 -  **Maven 3.6+** (opcional, o projeto inclui Maven Wrapper)
 
-  - Verifique a instalação: `mvn -version`
-  - Download: [Apache Maven](https://maven.apache.org/download.cgi)
+- Verifique a instalação: `mvn -version`
+- Download: [Apache Maven](https://maven.apache.org/download.cgi)
 
 - **MySQL 8.0+**
   - O projeto está configurado para conectar a um banco MySQL
   - Certifique-se de ter as credenciais corretas
+
+Para rodar com Docker:
+
+- **Docker** - [Instale aqui](https://www.docker.com/products/docker-desktop)
+- **Docker Compose** - Geralmente incluído com Docker Desktop
 
 ## 🚀 Instruções de Inicialização
 
@@ -52,8 +53,8 @@ Para rodar localmente:
 Edite o arquivo `application.properties`:
 
 ```properties
-spring.datasource.url=jdbc:mysql://db:3306/clinica_api
-spring.datasource.username=root
+spring.datasource.url=jdbc:mysql://localhost:3306/clinica_api
+spring.datasource.username=SEU_USUARIO
 spring.datasource.password=SUA_SENHA
 api.security.token.secret=SUA_CHAVE_JWT
 ```
@@ -79,7 +80,31 @@ mvn clean install
 
 ### 3. Executar o Projeto
 
-#### Opção 1: Usando Docker
+#### Opção 1: Localmente
+
+Execute um dos comandos:
+
+Windows:
+```powershell
+.\mvnw.cmd spring-boot:run
+```
+
+Linux/Mac:
+```bash
+./mvnw spring-boot:run
+```
+
+Com Maven instalado:
+```bash
+mvn spring-boot:run
+```
+
+Ou com JAR compilado:
+```bash
+java -jar target/clinica-0.0.1-SNAPSHOT.jar
+```
+
+#### Opção 2: Usando Docker
 
 Execute o seguinte comando:
 
@@ -91,31 +116,6 @@ Para parar:
 
 ```bash
 docker compose down
-```
-
-#### Opção 2: Localmente
-
-
-O projeto usa o profile `dev` para rodar localmente. Execute um dos comandos:
-
-Windows:
-```powershell
-.\mvnw.cmd spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=dev"
-```
-
-Linux/Mac:
-```bash
-./mvnw spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=dev"
-```
-
-Com Maven instalado:
-```bash
-mvn spring-boot:run -Dspring.profiles.active=dev
-```
-
-Ou com JAR compilado:
-```bash
-java -jar target/clinica-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev
 ```
 
 ### 4. Verificar Execução
@@ -170,14 +170,14 @@ clinica-api/
 │   │   │   └── ClinicaApplication.java
 │   │   └── resources/
 │   │       ├── application.properties          # Configurações principais
-│   │       ├── application-dev.properties      # Configurações desenvolvimento
-│   │       ├── application-prod.properties     # Configurações produção
-│   │       ├── application-test.properties     # Configurações testes
+│   │       ├── application-prod.properties     # Configurações para produção
+│   │       ├── application-test.properties     # Configurações para testes
 │   │       ├── ValidationMessages.properties   # Mensagens de validação
 │   │       └── db/migration/                   # Migrations Flyway
 │   └── test/                             # Testes unitários
-├── docker-compose.yaml                   # Orquestração de containers (API + MySQL)
-├── Dockerfile                            # Build da imagem da aplicação
+├── docker-compose.yaml                   # Orquestração para desenvolvimento local (build a partir do código-fonte)
+├── docker-compose.prod.yaml              # Orquestração para execução via imagens do Docker Hub (sem clone)
+├── Dockerfile                            # Definição da imagem da aplicação
 ├── pom.xml                               # Configuração do Maven
 └── README.md                             # Este arquivo
 ```
