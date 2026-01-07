@@ -82,16 +82,6 @@ public class ConsultaService {
     }
 
     @Transactional
-    public ConsultaResponse atualizar(Long id, AgendaConsultaRequest request) {
-        var consulta = consultaRepository.findById(id)
-                .orElseThrow(EntityNotFoundException::new);
-
-        consulta.atualizarDados(request);
-
-        return new ConsultaResponse(consulta);
-    }
-
-    @Transactional
     public void cancelar(Long id, CancelamentoConsultaRequest request) {
         if (!consultaRepository.existsById(id)) {
             throw new ValidacaoException("Id da consulta informado não existe");

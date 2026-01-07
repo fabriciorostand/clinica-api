@@ -1,6 +1,5 @@
 package com.alura.clinica.domain.consulta;
 
-import com.alura.clinica.domain.consulta.dto.AgendaConsultaRequest;
 import com.alura.clinica.domain.medico.Medico;
 import com.alura.clinica.domain.paciente.Paciente;
 import jakarta.persistence.*;
@@ -32,20 +31,6 @@ public class Consulta {
     @Column(name = "motivo_cancelamento")
     @Enumerated(EnumType.STRING)
     private MotivoCancelamento motivoCancelamento;
-
-    public void atualizarDados(AgendaConsultaRequest request) {
-        if (request.getPacienteId() != null) {
-//            this.paciente.getId() = request.getPacienteId();
-        }
-
-        if (request.getMedicoId() != null) {
-//            this.medico.getId() = request.getMedicoId();
-        }
-
-        if (request.getData() != null) {
-            this.data = request.getData();
-        }
-    }
 
     public void cancelar(MotivoCancelamento motivo) {
         this.motivoCancelamento = motivo;
