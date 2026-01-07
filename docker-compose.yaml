@@ -4,7 +4,8 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/clinica_api
       SPRING_DATASOURCE_USERNAME: root
@@ -15,6 +16,11 @@ services:
     environment:
       MYSQL_DATABASE: clinica_api
       MYSQL_ROOT_PASSWORD: root
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     volumes:
       - mysql.clinica:/var/lib/mysql
 volumes:
