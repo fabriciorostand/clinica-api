@@ -47,13 +47,6 @@ public class ConsultaController {
         return ResponseEntity.ok(consultas);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ConsultaResponse> atualizar(@PathVariable Long id, AgendaConsultaRequest request) {
-        var consulta = consultaService.atualizar(id, request);
-
-        return ResponseEntity.ok(consulta);
-    }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> cancelar(@PathVariable Long id, @RequestBody @Valid CancelamentoConsultaRequest request) {
         consultaService.cancelar(id, request);
